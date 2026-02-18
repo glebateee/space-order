@@ -1,0 +1,7 @@
+env: "local"
+storage_path: "./storage/storage.db"
+http_config:
+  host: "localhost"
+  port: 7788
+  timeout: "10s"
+  idle_timeout: "20s"
