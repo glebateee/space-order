@@ -9,9 +9,10 @@ import (
 )
 
 type Config struct {
-	Env         string      `yaml:"env"          env-default:"local"`
-	StoragePath string      `yaml:"storage_path" env-required:"true"`
-	HttpConfig  *HttpConfig `yaml:"http_config"`
+	Env             string           `yaml:"env"          env-default:"local"`
+	StoragePath     string           `yaml:"storage_path" env-required:"true"`
+	HttpConfig      *HttpConfig      `yaml:"http_config"`
+	InventoryClient *InventoryClient `yaml:"grpc_inventory"`
 }
 
 type HttpConfig struct {
@@ -19,6 +20,11 @@ type HttpConfig struct {
 	Port        int           `yaml:"port"          env-default:"2282"`
 	Timeout     time.Duration `yaml:"timeout"       env-default:"1h"`
 	IdleTimeout time.Duration `yaml:"idle_timeout"  env-default:"2h"`
+}
+
+type InventoryClient struct {
+	GrpcHost string `yaml:"grpc_host"          env-default:"localhost"`
+	GrpcPort int    `yaml:"grpc_port"          env-default:"5432"`
 }
 
 var emptyPath = ""

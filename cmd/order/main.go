@@ -27,6 +27,8 @@ func main() {
 		cfg.HttpConfig.Port,
 		cfg.HttpConfig.Timeout,
 		cfg.HttpConfig.IdleTimeout,
+		cfg.InventoryClient.GrpcHost,
+		cfg.InventoryClient.GrpcPort,
 	)
 
 	go mainApp.HttpApp.MustStart()

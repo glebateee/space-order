@@ -5,3 +5,6 @@ http_config:
   port: 7788
   timeout: "10s"
   idle_timeout: "20s"
+grpc_inventory:
+  grpc_host: "localhost"
+  grpc_port: 12345
