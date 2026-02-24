@@ -8,9 +8,13 @@ import (
 	"strconv"
 
 	"github.com/glebateee/space-order/internal/domain/models"
+	"github.com/glebateee/space-order/internal/lib/sl"
+	"github.com/glebateee/space-order/internal/service"
 	invv1 "github.com/glebateee/space-proto/gen/go/inventory"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 )
 
 type Inventory struct {
@@ -38,26 +42,29 @@ func New(
 	}, nil
 }
 
-func gRPCToProduct(p *invv1.Product) *models.Product {
-	return &models.Product{
-		UUID:        p.GetUuid(),
-		SKU:         p.GetSku(),
-		Name:        p.GetName(),
-		Description: p.GetDescription(),
-		Category:    p.GetCategory(),
-		Currency:    p.GetCurrency(),
-		BasePrice:   p.GetBasePrice(),
-		CreatedAt:   p.GetCreatedAt().AsTime(),
-		UpdatedAt:   p.GetUpdatedAt().AsTime(),
-	}
-}
 func (iv *Inventory) ProductSku(ctx context.Context, sku string) (*models.Product, error) {
+	const op = "inventory.ProductSku"
+	logger := iv.logger.With(
+		slog.String("op", op),
+	)
 	resp, err := iv.api.GetProduct(ctx,
 		&invv1.GetProductRequest{
 			Sku: sku,
 		})
 	if err != nil {
-		return nil, err
+		st, ok := status.FromError(err)
+		if !ok {
+			logger.Error("failed convert to grpc error", sl.Err(err))
+			return nil, service.ErrInternal
+		}
+		switch st.Code() {
+		case codes.InvalidArgument:
+			logger.Error("failed to process", sl.Err(err))
+			return nil, service.ErrInvalid
+		default:
+			logger.Error("failed to handle error type", sl.Err(err))
+			return nil, service.ErrInternal
+		}
 	}
 	respProd := resp.GetProduct()
 	return gRPCToProduct(respProd), nil
