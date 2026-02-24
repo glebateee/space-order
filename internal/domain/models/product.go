@@ -8,7 +8,7 @@ type Product struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Category    string    `json:"category"`
-	Currency    rune      `json:"currency"`
+	Currency    string    `json:"currency"`
 	BasePrice   int64     `json:"base_price"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`

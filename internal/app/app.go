@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"log/slog"
 	"time"
 
@@ -27,6 +28,7 @@ func New(
 		panic(err)
 	}
 	handler := handler.New(
+		context.Background(),
 		logger,
 		invClient,
 	)

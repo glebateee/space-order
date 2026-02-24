@@ -6,12 +6,18 @@ vars:
   GREETING: Hello, world!
 
 tasks:
-  run:
+  git-push:
+    desc: commits and pushes to github
+    cmds:
+      - git add .
+      - git commit -m {{ .CLI_ARGS }}
+      - git push -u origin main
+  run-local:
     desc: run application with local.yaml
     cmds:
-      - go run ".\cmd\order\main.go" --config="./config/local.yaml"
+      - go run ./cmd/order/main.go --config="./config/local.yaml"
   default:
-    desc: Print a greeting message
+    desc: print list of commands
     cmds:
-      - echo "{{.GREETING}}"
+      - task --list
     silent: true

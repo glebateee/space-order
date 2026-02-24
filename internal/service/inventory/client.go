@@ -38,19 +38,27 @@ func New(
 	}, nil
 }
 
-func (iv *Inventory) Get(ctx context.Context) ([]models.Product, error) {
-	resp, err := iv.api.GetProductList(ctx,
-		&invv1.GetProductListRequest{})
+func gRPCToProduct(p *invv1.Product) *models.Product {
+	return &models.Product{
+		UUID:        p.GetUuid(),
+		SKU:         p.GetSku(),
+		Name:        p.GetName(),
+		Description: p.GetDescription(),
+		Category:    p.GetCategory(),
+		Currency:    p.GetCurrency(),
+		BasePrice:   p.GetBasePrice(),
+		CreatedAt:   p.GetCreatedAt().AsTime(),
+		UpdatedAt:   p.GetUpdatedAt().AsTime(),
+	}
+}
+func (iv *Inventory) ProductSku(ctx context.Context, sku string) (*models.Product, error) {
+	resp, err := iv.api.GetProduct(ctx,
+		&invv1.GetProductRequest{
+			Sku: sku,
+		})
 	if err != nil {
 		return nil, err
 	}
-	respProds := resp.GetProducts()
-	prods := make([]models.Product, 0, len(respProds))
-	for _, p := range respProds {
-		prods = append(prods, models.Product{
-			UUID: p.GetUuid(),
-			SKU:  p.GetSku(),
-		})
-	}
-	return prods, nil
+	respProd := resp.GetProduct()
+	return gRPCToProduct(respProd), nil
 }
