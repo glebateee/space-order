@@ -17,6 +17,7 @@ var emptySku = ""
 
 type Provider interface {
 	ProductSku(ctx context.Context, sku string) (*models.Product, error)
+	ProductList(ctx context.Context) ([]*models.Product, error)
 }
 
 func New(ctx context.Context, logger *slog.Logger, prodProvider Provider) http.HandlerFunc {

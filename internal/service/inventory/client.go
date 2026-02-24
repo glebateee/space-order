@@ -2,6 +2,8 @@ package inventory
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
@@ -68,4 +70,26 @@ func (iv *Inventory) ProductSku(ctx context.Context, sku string) (*models.Produc
 	}
 	respProd := resp.GetProduct()
 	return gRPCToProduct(respProd), nil
+}
+
+func (iv *Inventory) ProductList(ctx context.Context) ([]*models.Product, error) {
+	const op = "inventory.ProductList"
+	logger := iv.logger.With(
+		slog.String("op", op),
+	)
+	resp, err := iv.api.GetProductList(ctx, &invv1.GetProductListRequest{})
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			logger.Info("no rows found")
+			return nil, service.ErrInvalid
+		}
+		logger.Error("unexpected error", sl.Err(err))
+		return nil, service.ErrInternal
+	}
+	respProds := resp.GetProducts()
+	prods := make([]*models.Product, 0, len(respProds))
+	for _, p := range respProds {
+		prods = append(prods, gRPCToProduct(p))
+	}
+	return prods, nil
 }

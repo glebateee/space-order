@@ -7,14 +7,14 @@ import (
 
 func gRPCToProduct(p *invv1.Product) *models.Product {
 	return &models.Product{
-		UUID:        p.GetUuid(),
+		//UUID:        p.GetUuid(),
 		SKU:         p.GetSku(),
 		Name:        p.GetName(),
 		Description: p.GetDescription(),
 		Category:    p.GetCategory(),
 		Currency:    p.GetCurrency(),
 		BasePrice:   p.GetBasePrice(),
-		CreatedAt:   p.GetCreatedAt().AsTime(),
-		UpdatedAt:   p.GetUpdatedAt().AsTime(),
+		//CreatedAt:   p.GetCreatedAt().AsTime(),
+		//UpdatedAt:   p.GetUpdatedAt().AsTime(),
 	}
 }

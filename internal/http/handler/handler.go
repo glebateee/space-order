@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/glebateee/space-order/internal/http/handler/product"
+	productlist "github.com/glebateee/space-order/internal/http/handler/product_list"
 	mwlogger "github.com/glebateee/space-order/internal/http/middleware/logger"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -28,6 +29,8 @@ func New(
 		mwlogger.New(logger),
 	)
 	router.Get("/product/{sku}", product.New(ctx, logger, prodProvider))
+	router.Get("/products", productlist.New(ctx, logger, prodProvider))
+
 	return &Handler{
 		logger:          logger,
 		productProvider: prodProvider,
